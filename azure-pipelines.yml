@@ -12,23 +12,29 @@
 #steps:
 #- script: echo Hello, world!
  # displayName: 'Run a one-line script'
+trigger:
+  branches:
+    include:
+      - main
 
 pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-  - task: Docker@2
+  - task: UsePythonVersion@0
     inputs:
-      containerRegistry: 'MyDockerRegistry'
-      repository: 'sample-app'
-      command: 'buildAndPush'
-      Dockerfile: '**/Dockerfile'
-      tags: '$(Build.BuildId)'
+      versionSpec: '3.x'
+      addToPath: true
 
   - script: |
-      echo "Deploying to Azure VM"
-     
-      ssh azureuser@$(VM_IP) 'docker pull sample-app && docker run -d -p 80:80 sample-app'
-    displayName: 'Deploy to VM'
-  
+      pip install ansible boto3
+    displayName: 'Install Ansible and Boto3'
+
+  - task: Bash@3
+    inputs:
+      targetType: 'inline'
+      script: |
+        ansible-playbook -i hosts.ini install_docker.yml
+        ansible-playbook -i hosts.ini deploy_docker.yml
+
 
