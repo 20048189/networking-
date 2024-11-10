@@ -27,12 +27,12 @@ steps:
 
   - script: |
       echo "Deploying to Azure VM"
-      echo See https://aka.ms/yaml
+     
       ssh azureuser@$(VM_IP) 'docker pull sample-app && docker run -d -p 80:80 sample-app'
     displayName: 'Deploy to VM'
   
 
 #- script: |
  #   echo Add other tasks to build, test, and deploy your project.
-  #  
+  ##echo See https://aka.ms/yaml
   #displayName: 'Run a multi-line script'
